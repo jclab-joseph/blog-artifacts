@@ -18,3 +18,9 @@
 | Xenova/all-MiniLM-L12-v2 (fp16) | Korean(KLUE-STS val) | 519 | 0.3141 | 39.41 | 49995 | 1268.62 | 0.07593 |
 | Xenova/all-MiniLM-L12-v2 (int8) | English(STS-B val) | 1500 | 0.8706 | 13.55 | 48709 | 3595.29 | 0.00903 |
 | Xenova/all-MiniLM-L12-v2 (int8) | Korean(KLUE-STS val) | 519 | 0.2973 | 33.15 | 49995 | 1507.96 | 0.06388 |
+| google/embeddinggemma-300m | English(STS-B val) | 1500 | 0.8665 | 44.69 | 49015 | 1096.70 | 0.02980 |
+| google/embeddinggemma-300m | Korean(KLUE-STS val) | 519 | 0.8607 | 18.41 | 22363 | 1214.58 | 0.03548 |
+| unsloth/embeddinggemma-300m-GGUF (Q8_0) | English(STS-B val) | 1500 | 0.8800 | 55.06 | 49015 | 890.23 | 0.03671 |
+| unsloth/embeddinggemma-300m-GGUF (Q8_0) | Korean(KLUE-STS val) | 519 | 0.8628 | 24.07 | 22363 | 929.03 | 0.04638 |
+| unsloth/embeddinggemma-300m-GGUF (Q4_0) | English(STS-B val) | 1500 | 0.8811 | 47.42 | 49015 | 1033.74 | 0.03161 |
+| unsloth/embeddinggemma-300m-GGUF (Q4_0) | Korean(KLUE-STS val) | 519 | 0.8590 | 21.90 | 22363 | 1021.05 | 0.04220 |

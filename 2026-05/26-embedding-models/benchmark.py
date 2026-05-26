@@ -1,4 +1,5 @@
 import time
+
 import numpy as np
 import onnxruntime as ort
 from datasets import load_dataset
@@ -14,23 +15,38 @@ CONFIGS = [
     {"name": "jhgan/ko-sbert-sts", "kind": "sbert"},
     {"name": "snunlp/KR-SBERT-V40K-klueNLI-augSTS", "kind": "sbert"},
     {"name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2", "kind": "sbert"},
-    # {
-    #     "name": "Xenova/paraphrase-multilingual-MiniLM-L12-v2",
-    #     "kind": "onnx",
-    #     "file_name": "onnx/model_fp16.onnx",
-    #     "variant": "fp16",
-    #     "tokenizer_name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-    # },
-    # {
-    #     "name": "Xenova/paraphrase-multilingual-MiniLM-L12-v2",
-    #     "kind": "onnx",
-    #     "file_name": "onnx/model_int8.onnx",
-    #     "variant": "int8",
-    #     "tokenizer_name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-    # },
-    # {"name": "Xenova/all-MiniLM-L12-v2", "kind": "onnx", "file_name": "onnx/model.onnx", "variant": "original"},
-    # {"name": "Xenova/all-MiniLM-L12-v2", "kind": "onnx", "file_name": "onnx/model_fp16.onnx", "variant": "fp16"},
-    # {"name": "Xenova/all-MiniLM-L12-v2", "kind": "onnx", "file_name": "onnx/model_int8.onnx", "variant": "int8"},
+    {
+        "name": "Xenova/paraphrase-multilingual-MiniLM-L12-v2",
+        "kind": "onnx",
+        "file_name": "onnx/model_fp16.onnx",
+        "variant": "fp16",
+        "tokenizer_name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    },
+    {
+        "name": "Xenova/paraphrase-multilingual-MiniLM-L12-v2",
+        "kind": "onnx",
+        "file_name": "onnx/model_int8.onnx",
+        "variant": "int8",
+        "tokenizer_name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    },
+    {"name": "Xenova/all-MiniLM-L12-v2", "kind": "onnx", "file_name": "onnx/model.onnx", "variant": "original"},
+    {"name": "Xenova/all-MiniLM-L12-v2", "kind": "onnx", "file_name": "onnx/model_fp16.onnx", "variant": "fp16"},
+    {"name": "Xenova/all-MiniLM-L12-v2", "kind": "onnx", "file_name": "onnx/model_int8.onnx", "variant": "int8"},
+    {"name": "google/embeddinggemma-300m", "kind": "sbert"},
+    {
+        "name": "unsloth/embeddinggemma-300m-GGUF",
+        "kind": "gguf",
+        "file_name": "embeddinggemma-300M-Q8_0.gguf",
+        "variant": "Q8_0",
+        "tokenizer_name": "google/embeddinggemma-300m",
+    },
+    {
+        "name": "unsloth/embeddinggemma-300m-GGUF",
+        "kind": "gguf",
+        "file_name": "embeddinggemma-300m-Q4_0.gguf",
+        "variant": "Q4_0",
+        "tokenizer_name": "google/embeddinggemma-300m",
+    },
 ]
 
 def cosine_sim(a, b):
@@ -45,12 +61,21 @@ def mean_pool(last_hidden_state, attention_mask):
     return summed / counts
 
 class SBertEncoder:
-    def __init__(self, model_name):
-        self.model = SentenceTransformer(model_name)
+    def __init__(self, model_name, file_name=None, tokenizer_name=None):
+        model_kwargs = {}
+        st_name = tokenizer_name or model_name
+
+        if file_name is not None:
+            model_kwargs["gguf_file"] = hf_hub_download(repo_id=model_name, filename=file_name)
+
+        self.model = SentenceTransformer(st_name, model_kwargs=model_kwargs)
         self.tokenizer = self.model.tokenizer
 
     def encode(self, texts, batch_size=64):
         return self.model.encode(texts, batch_size=batch_size, convert_to_numpy=True, show_progress_bar=False)
+
+    def close(self):
+        pass
 
 
 class ONNXEncoder:
@@ -110,6 +135,47 @@ class ONNXEncoder:
 
         return np.vstack(vecs)
 
+    def close(self):
+        self.session = None
+
+
+class GGUFEncoder:
+    def __init__(self, model_name, file_name, tokenizer_name=None):
+        try:
+            from llama_cpp import Llama
+        except ImportError as exc:
+            raise ImportError("GGUF benchmarking requires llama-cpp-python to be installed.") from exc
+
+        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name or model_name)
+        model_path = hf_hub_download(repo_id=model_name, filename=file_name)
+        self.model = Llama(
+            model_path=model_path,
+            embedding=True,
+            n_ctx=512,
+            verbose=False,
+        )
+
+    def encode(self, texts, batch_size=64):
+        vecs = []
+
+        for i in range(0, len(texts), batch_size):
+            batch = texts[i:i + batch_size]
+
+            if hasattr(self.model, "embed"):
+                embeddings = self.model.embed(batch)
+            else:
+                result = self.model.create_embedding(batch)
+                embeddings = [item["embedding"] for item in result["data"]]
+
+            vecs.append(np.asarray(embeddings, dtype=np.float32))
+
+        return np.vstack(vecs)
+
+    def close(self):
+        if self.model is not None:
+            self.model.close()
+            self.model = None
+
 
 def total_tokens(tokenizer, s1, s2):
     c1 = sum(len(tokenizer(x, truncation=True, max_length=512)["input_ids"]) for x in s1)
@@ -140,7 +206,17 @@ def load_korean_klue_sts():
 
 def build_encoder(cfg):
     if cfg["kind"] == "sbert":
-        return SBertEncoder(cfg["name"])
+        return SBertEncoder(
+            cfg["name"],
+            file_name=cfg.get("file_name", None),
+            tokenizer_name=cfg.get("tokenizer_name", None),
+        )
+    if cfg["kind"] == "gguf":
+        return GGUFEncoder(
+            cfg["name"],
+            cfg["file_name"],
+            tokenizer_name=cfg.get("tokenizer_name", None),
+        )
 
     return ONNXEncoder(
         cfg["name"],
@@ -150,7 +226,7 @@ def build_encoder(cfg):
 
 
 def display_name(cfg):
-    return f"{cfg['name']} ({cfg['variant']})" if cfg["kind"] == "onnx" else cfg["name"]
+    return f"{cfg['name']} ({cfg['variant']})" if "variant" in cfg else cfg["name"]
 
 
 if __name__ == "__main__":
@@ -162,11 +238,14 @@ if __name__ == "__main__":
         name = display_name(cfg)
         print("Loading", name, flush=True)
         encoder = build_encoder(cfg)
-        for dname, data in [("English(STS-B val)", en), ("Korean(KLUE-STS val)", ko)]:
-            result = eval_dataset(encoder, *data)
-            result.update(model=name, dataset=dname)
-            rows.append(result)
-            print(name, dname, result, flush=True)
+        try:
+            for dname, data in [("English(STS-B val)", en), ("Korean(KLUE-STS val)", ko)]:
+                result = eval_dataset(encoder, *data)
+                result.update(model=name, dataset=dname)
+                rows.append(result)
+                print(name, dname, result, flush=True)
+        finally:
+            encoder.close()
 
     with open("benchmark_results.md", "w", encoding="utf-8") as f:
         f.write("# Embedding STS Benchmark\n\n")
