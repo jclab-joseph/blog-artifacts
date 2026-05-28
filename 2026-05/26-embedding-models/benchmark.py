@@ -32,15 +32,14 @@ CONFIGS = [
         "tokenizer_name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     },
     {"name": "Xenova/all-MiniLM-L12-v2", "kind": "onnx", "file_name": "onnx/model.onnx", "variant": "original"},
-    {"name": "Xenova/all-MiniLM-L12-v2", "kind": "onnx", "file_name": "onnx/model_fp16.onnx", "variant": "fp16"},
     {"name": "Xenova/all-MiniLM-L12-v2", "kind": "onnx", "file_name": "onnx/model_int8.onnx", "variant": "int8"},
-    {
-        "name": "google/embeddinggemma-300m",
-        "kind": "sbert",
-        "variant": "original",
-        "query_prefix": "query: ",
-        "passage_prefix": "title: \"none\" | text: ",
-    },
+    # {
+    #     "name": "google/embeddinggemma-300m",
+    #     "kind": "sbert",
+    #     "variant": "original",
+    #     "query_prefix": "query: ",
+    #     "passage_prefix": "title: \"none\" | text: ",
+    # },
     {
         "name": "unsloth/embeddinggemma-300m-GGUF",
         "kind": "gguf",
@@ -61,29 +60,51 @@ CONFIGS = [
     },
     {"name": "sentence-transformers/distiluse-base-multilingual-cased-v2", "kind": "sbert", "variant": "original"},
     {"name": "Xenova/distiluse-base-multilingual-cased-v2", "kind": "onnx", "file_name": "onnx/model_int8.onnx", "variant": "int8"},
+    # {
+    #     "name": "exp-models/dragonkue-KoEn-E5-Tiny",
+    #     "kind": "onnx",
+    #     "file_name": "onnx/model.onnx",
+    #     "variant": "original",
+    #     "query_prefix": "query: ",
+    #     "passage_prefix": "passage: ",
+    # },
+    # {
+    #     "name": "exp-models/dragonkue-KoEn-E5-Tiny", "kind": "gguf", "file_name": "ggml-model-q8_0.gguf", "variant": "Q8_0",
+    #     "query_prefix": "query: ",
+    #     "passage_prefix": "passage: ",
+    # }, # not working
+    # {
+    #     "name": "exp-models/dragonkue-KoEn-E5-Tiny-ONNX",
+    #     "kind": "onnx",
+    #     "file_name": "onnx/model_qint8_arm64.onnx",
+    #     "variant": "int8",
+    #     "query_prefix": "query: ",
+    #     "passage_prefix": "passage: ",
+    # }
     {
-        "name": "exp-models/dragonkue-KoEn-E5-Tiny",
-        "kind": "onnx",
-        "file_name": "onnx/model.onnx",
-        "variant": "original",
+        "name": "jc-lab/multilingual-e5-small-ko-v2-gguf",
+        "kind": "gguf",
+        "file_name": "ggml-model-q8_0.gguf",
+        "variant": "Q8_0",
+        "tokenizer_name": "dragonkue/multilingual-e5-small-ko-v2",
         "query_prefix": "query: ",
         "passage_prefix": "passage: ",
     },
-    # {"name": "exp-models/dragonkue-KoEn-E5-Tiny", "kind": "gguf", "file_name": "ggml-model-q8_0.gguf", "variant": "Q8_0", "tokenizer_name": "dragonkue/multilingual-e5-small-ko"}, # not working
     {
-        "name": "exp-models/dragonkue-KoEn-E5-Tiny-ONNX",
-        "kind": "onnx",
-        "file_name": "onnx/model_qint8_arm64.onnx",
-        "variant": "int8",
+        "name": "jc-lab/multilingual-e5-small-ko-v2-gguf",
+        "kind": "gguf",
+        "file_name": "ggml-model-q4_k_m.gguf",
+        "variant": "Q4_K_M",
+        "tokenizer_name": "dragonkue/multilingual-e5-small-ko-v2",
         "query_prefix": "query: ",
         "passage_prefix": "passage: ",
-    }
+    },
 ]
 
 IMPLEMENTATION_VERSIONS = {
     "sbert": 1,
     "onnx": 1,
-    "gguf": 1,
+    "gguf": 2,
 }
 
 CACHE_PATH = Path(__file__).with_name("benchmark_cache.json")
@@ -194,30 +215,67 @@ class ONNXEncoder:
 class GGUFEncoder:
     def __init__(self, model_name, file_name, tokenizer_name=None):
         try:
-            from llama_cpp import Llama
+            import llama_cpp
         except ImportError as exc:
             raise ImportError("GGUF benchmarking requires llama-cpp-python to be installed.") from exc
 
-        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name or model_name)
+        self.max_length = 256
+        self.tokenizer = None
         model_path = hf_hub_download(repo_id=model_name, filename=file_name)
-        self.model = Llama(
+        self.model = llama_cpp.Llama(
             model_path=model_path,
             embedding=True,
-            n_ctx=256,
+            pooling_type=llama_cpp.LLAMA_POOLING_TYPE_MEAN,
+            n_ctx=512,
+            n_batch=self.max_length,
+            n_ubatch=self.max_length,
             verbose=False,
+            n_gpu_layers=-1,
         )
+        metadata = self.model.metadata or {}
+        add_bos_value = metadata.get("tokenizer.ggml.add_bos_token", "true")
+        self.add_bos_token = str(add_bos_value).lower() == "true"
+
+    def _truncate_texts(self, texts):
+        truncated = []
+
+        for text in texts:
+            input_ids = self.model.tokenize(
+                text.encode("utf-8"),
+                add_bos=self.add_bos_token,
+                special=False,
+            )[:self.max_length]
+
+            if self.add_bos_token and input_ids:
+                input_ids = input_ids[1:]
+
+            truncated.append(
+                self.model.detokenize(input_ids).decode("utf-8", errors="ignore")
+            )
+
+        return truncated
+
+    def count_tokens(self, texts):
+        total = 0
+        for text in texts:
+            total += len(
+                self.model.tokenize(
+                    text.encode("utf-8"),
+                    add_bos=self.add_bos_token,
+                    special=False,
+                )[:self.max_length]
+            )
+        return total
 
     def encode(self, texts, batch_size=64):
         vecs = []
 
         for i in range(0, len(texts), batch_size):
-            batch = texts[i:i + batch_size]
+            batch = self._truncate_texts(texts[i:i + batch_size])
 
-            if hasattr(self.model, "embed"):
-                embeddings = self.model.embed(batch)
-            else:
-                result = self.model.create_embedding(batch)
-                embeddings = [item["embedding"] for item in result["data"]]
+            result = self.model.create_embedding(batch)
+            data = sorted(result["data"], key=lambda x: x["index"])
+            embeddings = [item["embedding"] for item in data]
 
             vecs.append(np.asarray(embeddings, dtype=np.float32))
 
@@ -242,7 +300,10 @@ def eval_dataset(encoder, s1, s2, y, batch_size=64):
     elapsed = time.perf_counter() - t0
 
     rho = float(spearmanr(cosine_sim(e1, e2), y).correlation)
-    tokens = total_tokens(encoder.tokenizer, s1, s2)
+    if hasattr(encoder, "count_tokens"):
+        tokens = encoder.count_tokens(s1) + encoder.count_tokens(s2)
+    else:
+        tokens = total_tokens(encoder.tokenizer, s1, s2)
     return {"samples": len(s1), "spearman": rho, "elapsed_s": elapsed, "tokens": tokens, "tokens_per_s": tokens / elapsed, "sec_per_pair": elapsed / len(s1)}
 
 
