@@ -100,6 +100,24 @@ CONFIGS = [
         "query_prefix": "query: ",
         "passage_prefix": "passage: ",
     },
+    {
+        "name": "second-state/embeddinggemma-300m-GGUF",
+        "kind": "gguf",
+        "file_name": "embeddinggemma-300m-Q4_K_M.gguf",
+        "variant": "Q4_K_M",
+        "tokenizer_name": "google/embeddinggemma-300m",
+        "query_prefix": "query: ",
+        "passage_prefix": "title: \"none\" | text: ",
+    },
+    {
+        "name": "second-state/embeddinggemma-300m-GGUF",
+        "kind": "gguf",
+        "file_name": "embeddinggemma-300m-Q5_K_M.gguf",
+        "variant": "Q5_K_M",
+        "tokenizer_name": "google/embeddinggemma-300m",
+        "query_prefix": "query: ",
+        "passage_prefix": "title: \"none\" | text: ",
+    },
 ]
 
 IMPLEMENTATION_VERSIONS = {

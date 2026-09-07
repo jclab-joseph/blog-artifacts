@@ -32,6 +32,9 @@
 | jc-lab/multilingual-e5-small-ko-v2-gguf (Q4_K_M) | Korean(KLUE-STS val) | 519 | 0.8031 | 0.33 | 20780 | 62507.24 | 0.00064 |
 | second-state/embeddinggemma-300m-GGUF (Q4_K_M) | English(STS-B val) | 1500 | 0.8786 | 11.25 | 49015 | 4355.46 | 0.00750 |
 | second-state/embeddinggemma-300m-GGUF (Q4_K_M) | Korean(KLUE-STS val) | 519 | 0.8602 | 0.94 | 22363 | 23797.79 | 0.00181 |
+| second-state/embeddinggemma-300m-GGUF (Q5_K_M) | English(STS-B val) | 1500 | 0.8800 | 10.70 | 49015 | 4579.41 | 0.00714 |
+| second-state/embeddinggemma-300m-GGUF (Q5_K_M) | Korean(KLUE-STS val) | 519 | 0.8552 | 0.93 | 22363 | 24154.46 | 0.00178 |
+
 
 ## Retrieval
 
@@ -65,6 +68,8 @@
 | jc-lab/multilingual-e5-small-ko-v2-gguf (Q4_K_M) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.5545 | 0.7867 | 0.8626 | 0.6738 | 91.60 | -1 | 0.00 | 0.43413 |
 | second-state/embeddinggemma-300m-GGUF (Q4_K_M) | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.7907 | 0.9535 | 0.9767 | 0.8690 | 31.32 | -1 | 0.00 | 0.72831 |
 | second-state/embeddinggemma-300m-GGUF (Q4_K_M) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.6114 | 0.8246 | 0.8578 | 0.7160 | 257.48 | -1 | 0.00 | 1.22030 |
+| second-state/embeddinggemma-300m-GGUF (Q5_K_M) | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.8605 | 0.9767 | 0.9767 | 0.9070 | 30.31 | -1 | 0.00 | 0.70489 |
+| second-state/embeddinggemma-300m-GGUF (Q5_K_M) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.6161 | 0.8199 | 0.8626 | 0.7166 | 260.04 | -1 | 0.00 | 1.23240 |
 
 
 ## 참고
