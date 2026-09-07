@@ -34,7 +34,18 @@
 | second-state/embeddinggemma-300m-GGUF (Q4_K_M) | Korean(KLUE-STS val) | 519 | 0.8602 | 0.94 | 22363 | 23797.79 | 0.00181 |
 | second-state/embeddinggemma-300m-GGUF (Q5_K_M) | English(STS-B val) | 1500 | 0.8800 | 10.70 | 49015 | 4579.41 | 0.00714 |
 | second-state/embeddinggemma-300m-GGUF (Q5_K_M) | Korean(KLUE-STS val) | 519 | 0.8552 | 0.93 | 22363 | 24154.46 | 0.00178 |
-
+| mykor/harrier-oss-v1-270m-GGUF (Q4_K_M) | English(STS-B val) | 1500 | 0.7538 | 18.89 | 49015 | 2594.33 | 0.01260 |
+| mykor/harrier-oss-v1-270m-GGUF (Q4_K_M) | Korean(KLUE-STS val) | 519 | 0.7290 | 4.43 | 22363 | 5042.78 | 0.00854 |
+| mykor/harrier-oss-v1-270m-GGUF (Q5_K_M) | English(STS-B val) | 1500 | 0.7537 | 18.48 | 49015 | 2652.94 | 0.01232 |
+| mykor/harrier-oss-v1-270m-GGUF (Q5_K_M) | Korean(KLUE-STS val) | 519 | 0.7305 | 4.43 | 22363 | 5051.53 | 0.00853 |
+| mykor/harrier-oss-v1-270m-GGUF (Q8) | English(STS-B val) | 1500 | 0.7558 | 18.61 | 49015 | 2634.50 | 0.01240 |
+| mykor/harrier-oss-v1-270m-GGUF (Q8) | Korean(KLUE-STS val) | 519 | 0.7320 | 4.41 | 22363 | 5070.89 | 0.00850 |
+| mykor/granite-embedding-311m-multilingual-r2-GGUF (Q5_K_M) | English(STS-B val) | 1500 | 0.8372 | 10.22 | 46015 | 4503.67 | 0.00681 |
+| mykor/granite-embedding-311m-multilingual-r2-GGUF (Q5_K_M) | Korean(KLUE-STS val) | 519 | 0.8240 | 0.98 | 21325 | 21681.62 | 0.00190 |
+| mykor/granite-embedding-311m-multilingual-r2-GGUF (Q4_K_M) | English(STS-B val) | 1500 | 0.8348 | 10.20 | 46015 | 4510.78 | 0.00680 |
+| mykor/granite-embedding-311m-multilingual-r2-GGUF (Q4_K_M) | Korean(KLUE-STS val) | 519 | 0.8230 | 0.96 | 21325 | 22139.07 | 0.00186 |
+| mykor/granite-embedding-311m-multilingual-r2-GGUF (Q8) | English(STS-B val) | 1500 | 0.8366 | 10.23 | 46015 | 4496.90 | 0.00682 |
+| mykor/granite-embedding-311m-multilingual-r2-GGUF (Q8) | Korean(KLUE-STS val) | 519 | 0.8241 | 0.95 | 21325 | 22383.34 | 0.00184 |
 
 ## Retrieval
 
@@ -70,8 +81,19 @@
 | second-state/embeddinggemma-300m-GGUF (Q4_K_M) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.6114 | 0.8246 | 0.8578 | 0.7160 | 257.48 | -1 | 0.00 | 1.22030 |
 | second-state/embeddinggemma-300m-GGUF (Q5_K_M) | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.8605 | 0.9767 | 0.9767 | 0.9070 | 30.31 | -1 | 0.00 | 0.70489 |
 | second-state/embeddinggemma-300m-GGUF (Q5_K_M) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.6161 | 0.8199 | 0.8626 | 0.7166 | 260.04 | -1 | 0.00 | 1.23240 |
-
+| mykor/harrier-oss-v1-270m-GGUF (Q4_K_M) | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.7209 | 0.8605 | 0.9070 | 0.7895 | 111.97 | -1 | 0.00 | 2.60389 |
+| mykor/harrier-oss-v1-270m-GGUF (Q4_K_M) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.2607 | 0.4502 | 0.5640 | 0.3705 | 1203.84 | -1 | 0.00 | 5.70543 |
+| mykor/harrier-oss-v1-270m-GGUF (Q5_K_M) | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.6977 | 0.8372 | 0.9535 | 0.7891 | 112.05 | -1 | 0.00 | 2.60572 |
+| mykor/harrier-oss-v1-270m-GGUF (Q5_K_M) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.2749 | 0.4550 | 0.5592 | 0.3783 | 1205.43 | -1 | 0.00 | 5.71293 |
+| mykor/harrier-oss-v1-270m-GGUF (Q8) | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.7209 | 0.8605 | 0.9302 | 0.7981 | 111.39 | -1 | 0.00 | 2.59041 |
+| mykor/harrier-oss-v1-270m-GGUF (Q8) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.2701 | 0.4739 | 0.5687 | 0.3789 | 1200.63 | -1 | 0.00 | 5.69021 |
+| mykor/granite-embedding-311m-multilingual-r2-GGUF (Q5_K_M) | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.7674 | 0.9070 | 0.9535 | 0.8426 | 33.88 | -1 | 0.00 | 0.78781 |
+| mykor/granite-embedding-311m-multilingual-r2-GGUF (Q5_K_M) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.4360 | 0.6114 | 0.6825 | 0.5314 | 316.87 | -1 | 0.00 | 1.50177 |
+| mykor/granite-embedding-311m-multilingual-r2-GGUF (Q4_K_M) | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.7674 | 0.9070 | 0.9535 | 0.8438 | 32.47 | -1 | 0.00 | 0.75517 |
+| mykor/granite-embedding-311m-multilingual-r2-GGUF (Q4_K_M) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.4597 | 0.6161 | 0.6825 | 0.5423 | 315.73 | -1 | 0.00 | 1.49636 |
+| mykor/granite-embedding-311m-multilingual-r2-GGUF (Q8) | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.7674 | 0.9302 | 0.9302 | 0.8411 | 32.42 | -1 | 0.00 | 0.75397 |
+| mykor/granite-embedding-311m-multilingual-r2-GGUF (Q8) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.4455 | 0.6114 | 0.6872 | 0.5365 | 309.73 | -1 | 0.00 | 1.46792 |
 
 ## 참고
 
-- second-state/embeddinggemma-300m-GGUF (Q4_K_M) 는 RTX 3080 에서 돌렸습니다.
+- second-state/embeddinggemma-300m-GGUF, harrier-oss-v1-270m-GGUF, granite-embedding-311m-multilingual-r2-GGUF 는 RTX 3080 에서 돌렸습니다.
