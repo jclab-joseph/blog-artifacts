@@ -9,6 +9,7 @@ from scipy.stats import spearmanr
 from huggingface_hub import hf_hub_download
 
 from sentence_transformers import SentenceTransformer
+from tqdm.auto import tqdm
 from transformers import AutoTokenizer
 
 import torch
@@ -140,6 +141,17 @@ def mean_pool(last_hidden_state, attention_mask):
     counts = np.clip(mask.sum(axis=1), 1e-9, None)
     return summed / counts
 
+def progress_range(start, stop, step, desc=None):
+    # Long corpora take hours with no output otherwise, which is
+    # indistinguishable from a hang.
+    return tqdm(
+        range(start, stop, step),
+        desc=desc,
+        unit="batch",
+        leave=False,
+    )
+
+
 class SBertEncoder:
     def __init__(self, model_name, file_name=None, tokenizer_name=None):
         model_kwargs = {}
@@ -152,7 +164,7 @@ class SBertEncoder:
         self.tokenizer = self.model.tokenizer
 
     def encode(self, texts, batch_size=64):
-        return self.model.encode(texts, batch_size=batch_size, convert_to_numpy=True, show_progress_bar=False)
+        return self.model.encode(texts, batch_size=batch_size, convert_to_numpy=True, show_progress_bar=True)
 
     def close(self):
         pass
@@ -177,7 +189,7 @@ class ONNXEncoder:
     def encode(self, texts, batch_size=64):
         vecs = []
 
-        for i in range(0, len(texts), batch_size):
+        for i in progress_range(0, len(texts), batch_size, desc="onnx encode"):
             batch = texts[i:i + batch_size]
 
             enc = self.tokenizer(
@@ -221,17 +233,27 @@ class GGUFEncoder:
 
         self.max_length = 256
         self.tokenizer = None
+        # Pooled embeddings require every sequence to fit in a single ubatch,
+        # so n_batch and n_ubatch must match. Sizing them well above
+        # max_length lets one decode cover several texts at once.
+        self.n_batch = 2048
         model_path = hf_hub_download(repo_id=model_name, filename=file_name)
         self.model = llama_cpp.Llama(
             model_path=model_path,
             embedding=True,
             pooling_type=llama_cpp.LLAMA_POOLING_TYPE_MEAN,
-            n_ctx=512,
-            n_batch=self.max_length,
-            n_ubatch=self.max_length,
+            n_ctx=self.n_batch,
+            n_batch=self.n_batch,
+            n_ubatch=self.n_batch,
             verbose=False,
             n_gpu_layers=-1,
         )
+
+        if not llama_cpp.llama_supports_gpu_offload():
+            print(
+                "  [warn] llama-cpp-python has no GPU offload support; "
+                "n_gpu_layers is ignored and this run is CPU-only."
+            )
         metadata = self.model.metadata or {}
         add_bos_value = metadata.get("tokenizer.ggml.add_bos_token", "true")
         self.add_bos_token = str(add_bos_value).lower() == "true"
@@ -270,7 +292,7 @@ class GGUFEncoder:
     def encode(self, texts, batch_size=64):
         vecs = []
 
-        for i in range(0, len(texts), batch_size):
+        for i in progress_range(0, len(texts), batch_size, desc="gguf encode"):
             batch = self._truncate_texts(texts[i:i + batch_size])
 
             result = self.model.create_embedding(batch)

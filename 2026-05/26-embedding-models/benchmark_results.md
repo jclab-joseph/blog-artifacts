@@ -30,6 +30,8 @@
 | jc-lab/multilingual-e5-small-ko-v2-gguf (Q8_0) | Korean(KLUE-STS val) | 519 | 0.8040 | 0.32 | 20780 | 64254.70 | 0.00062 |
 | jc-lab/multilingual-e5-small-ko-v2-gguf (Q4_K_M) | English(STS-B val) | 1500 | 0.8705 | 0.88 | 53842 | 60864.01 | 0.00059 |
 | jc-lab/multilingual-e5-small-ko-v2-gguf (Q4_K_M) | Korean(KLUE-STS val) | 519 | 0.8031 | 0.33 | 20780 | 62507.24 | 0.00064 |
+| second-state/embeddinggemma-300m-GGUF (Q4_K_M) | English(STS-B val) | 1500 | 0.8786 | 11.25 | 49015 | 4355.46 | 0.00750 |
+| second-state/embeddinggemma-300m-GGUF (Q4_K_M) | Korean(KLUE-STS val) | 519 | 0.8602 | 0.94 | 22363 | 23797.79 | 0.00181 |
 
 ## Retrieval
 
@@ -61,3 +63,10 @@
 | jc-lab/multilingual-e5-small-ko-v2-gguf (Q8_0) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.5592 | 0.8009 | 0.8626 | 0.6812 | 90.83 | -1 | 0.00 | 0.43047 |
 | jc-lab/multilingual-e5-small-ko-v2-gguf (Q4_K_M) | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.8372 | 0.9767 | 1.0000 | 0.9078 | 9.57 | -1 | 0.00 | 0.22258 |
 | jc-lab/multilingual-e5-small-ko-v2-gguf (Q4_K_M) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.5545 | 0.7867 | 0.8626 | 0.6738 | 91.60 | -1 | 0.00 | 0.43413 |
+| second-state/embeddinggemma-300m-GGUF (Q4_K_M) | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.7907 | 0.9535 | 0.9767 | 0.8690 | 31.32 | -1 | 0.00 | 0.72831 |
+| second-state/embeddinggemma-300m-GGUF (Q4_K_M) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.6114 | 0.8246 | 0.8578 | 0.7160 | 257.48 | -1 | 0.00 | 1.22030 |
+
+
+## 참고
+
+- second-state/embeddinggemma-300m-GGUF (Q4_K_M) 는 RTX 3080 에서 돌렸습니다.
