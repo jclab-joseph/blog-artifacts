@@ -34,13 +34,13 @@ CONFIGS = [
     },
     {"name": "Xenova/all-MiniLM-L12-v2", "kind": "onnx", "file_name": "onnx/model.onnx", "variant": "original"},
     {"name": "Xenova/all-MiniLM-L12-v2", "kind": "onnx", "file_name": "onnx/model_int8.onnx", "variant": "int8"},
-    # {
-    #     "name": "google/embeddinggemma-300m",
-    #     "kind": "sbert",
-    #     "variant": "original",
-    #     "query_prefix": "query: ",
-    #     "passage_prefix": "title: \"none\" | text: ",
-    # },
+    {
+        "name": "google/embeddinggemma-300m",
+        "kind": "sbert",
+        "variant": "original",
+        "query_prefix": "query: ",
+        "passage_prefix": "title: \"none\" | text: ",
+    },
     {
         "name": "unsloth/embeddinggemma-300m-GGUF",
         "kind": "gguf",
