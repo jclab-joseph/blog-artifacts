@@ -1,4 +1,5 @@
 import json
+import os
 import time
 from pathlib import Path
 
@@ -13,6 +14,9 @@ from tqdm.auto import tqdm
 from transformers import AutoTokenizer
 
 import torch
+
+QWEN3_QUERY_PREFIX = "Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery:"
+F2LLM_QUERY_PREFIX = "Instruct: Given a question, retrieve passages that can help answer the question.\nQuery: "
 
 CONFIGS = [
     {"name": "jhgan/ko-sbert-sts", "kind": "sbert"},
@@ -166,16 +170,70 @@ CONFIGS = [
         "query_prefix": "",
         "passage_prefix": "",
     },
+    {
+        "name": "mradermacher/Qwen3-Embedding-8B-i1-GGUF",
+        "kind": "gguf",
+        "file_name": "Qwen3-Embedding-8B.i1-Q4_K_M.gguf",
+        "variant": "i1-Q4_K_M",
+        "pooling": "last",
+        "query_prefix": QWEN3_QUERY_PREFIX,
+        "passage_prefix": "",
+    },
+    {
+        "name": "dragonkue/BGE-m3-ko",
+        "kind": "sbert",
+        "variant": "original",
+        "max_seq_length": 256,
+        "query_prefix": "",
+        "passage_prefix": "",
+    },
+    {
+        "name": "Neuwhufbox/BGE-m3-ko-gguf",
+        "kind": "gguf",
+        "file_name": "BGE-M3-567M-Q8_0.gguf",
+        "variant": "Q8_0",
+        "pooling": "cls",
+        "query_prefix": "",
+        "passage_prefix": "",
+    },
+    {
+        "name": "codefuse-ai/F2LLM-v2-1.7B",
+        "kind": "sbert",
+        "variant": "original",
+        "max_seq_length": 256,
+        "model_kwargs": {"torch_dtype": "bfloat16"},
+        "query_prefix": F2LLM_QUERY_PREFIX,
+        "passage_prefix": "",
+    },
+    {
+        "name": "mradermacher/F2LLM-v2-1.7B-GGUF",
+        "kind": "gguf",
+        "file_name": "F2LLM-v2-1.7B.Q8_0.gguf",
+        "variant": "Q8_0",
+        "pooling": "last",
+        "query_prefix": F2LLM_QUERY_PREFIX,
+        "passage_prefix": "",
+    },
+    {
+        "name": "mradermacher/F2LLM-v2-1.7B-GGUF",
+        "kind": "gguf",
+        "file_name": "F2LLM-v2-1.7B.Q4_K_M.gguf",
+        "variant": "Q4_K_M",
+        "pooling": "last",
+        "query_prefix": F2LLM_QUERY_PREFIX,
+        "passage_prefix": "",
+    },
 ]
 
 IMPLEMENTATION_VERSIONS = {
     "sbert": 1,
     "onnx": 1,
     "gguf": 2,
+    "openrouter": 1,
 }
 
-CACHE_PATH = Path(__file__).with_name("benchmark_cache.json")
-RESULT_PATH = Path(__file__).with_name("benchmark_results.md")
+CACHE_PATH = Path(os.environ["BENCH_CACHE"]) if os.environ.get("BENCH_CACHE") else Path(__file__).with_name("benchmark_cache.json")
+RESULT_PATH = Path(os.environ["BENCH_RESULT"]) if os.environ.get("BENCH_RESULT") else Path(__file__).with_name("benchmark_results.md")
 
 STS_BENCHMARKS = [
     {"name": "English(STS-B val)", "type": "sts", "loader": "load_english_stsb"},
@@ -219,21 +277,28 @@ def progress_range(start, stop, step, desc=None):
 
 
 class SBertEncoder:
-    def __init__(self, model_name, file_name=None, tokenizer_name=None):
-        model_kwargs = {}
+    def __init__(self, model_name, file_name=None, tokenizer_name=None, max_seq_length=None, model_kwargs=None):
+        model_kwargs = dict(model_kwargs or {})
         st_name = tokenizer_name or model_name
 
         if file_name is not None:
             model_kwargs["gguf_file"] = hf_hub_download(repo_id=model_name, filename=file_name)
 
         self.model = SentenceTransformer(st_name, model_kwargs=model_kwargs)
+        if max_seq_length is not None:
+            self.model.max_seq_length = max_seq_length
         self.tokenizer = self.model.tokenizer
 
     def encode(self, texts, batch_size=64):
         return self.model.encode(texts, batch_size=batch_size, convert_to_numpy=True, show_progress_bar=True)
 
     def close(self):
-        pass
+        import gc
+
+        self.model = None
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
 
 
 class ONNXEncoder:
@@ -291,7 +356,7 @@ class ONNXEncoder:
 
 
 class GGUFEncoder:
-    def __init__(self, model_name, file_name, tokenizer_name=None):
+    def __init__(self, model_name, file_name, tokenizer_name=None, pooling="mean"):
         try:
             import llama_cpp
         except ImportError as exc:
@@ -307,7 +372,11 @@ class GGUFEncoder:
         self.model = llama_cpp.Llama(
             model_path=model_path,
             embedding=True,
-            pooling_type=llama_cpp.LLAMA_POOLING_TYPE_MEAN,
+            pooling_type={
+                "mean": llama_cpp.LLAMA_POOLING_TYPE_MEAN,
+                "cls": llama_cpp.LLAMA_POOLING_TYPE_CLS,
+                "last": llama_cpp.LLAMA_POOLING_TYPE_LAST,
+            }[pooling],
             n_ctx=self.n_batch,
             n_batch=self.n_batch,
             n_ubatch=self.n_batch,
@@ -373,6 +442,70 @@ class GGUFEncoder:
         if self.model is not None:
             self.model.close()
             self.model = None
+
+
+class OpenRouterEncoder:
+    """Embeddings via the OpenRouter API; inputs are truncated locally to 256 tokens."""
+
+    URL = "https://openrouter.ai/api/v1/embeddings"
+
+    def __init__(self, model_name, tokenizer_name, workers=8):
+        import requests
+
+        self.requests = requests
+        self.model_name = model_name
+        self.workers = workers
+        self.max_length = 256
+        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
+        self.api_key = os.environ.get("OPENROUTER_API_KEY")
+        if not self.api_key:
+            for line in Path(__file__).with_name(".env").read_text().splitlines():
+                if line.startswith("OPENROUTER_API_KEY="):
+                    self.api_key = line.split("=", 1)[1].strip().strip('"\'')
+        if not self.api_key:
+            raise RuntimeError("OPENROUTER_API_KEY is not set")
+
+    def _truncate(self, text):
+        ids = self.tokenizer(text, add_special_tokens=False, truncation=True, max_length=self.max_length)["input_ids"]
+        return self.tokenizer.decode(ids)
+
+    def _request(self, batch):
+        for attempt in range(8):
+            try:
+                resp = self.requests.post(
+                    self.URL,
+                    headers={"Authorization": f"Bearer {self.api_key}"},
+                    json={"model": self.model_name, "input": batch, "encoding_format": "float"},
+                    timeout=180,
+                )
+                if resp.status_code == 200:
+                    data = sorted(resp.json()["data"], key=lambda x: x["index"])
+                    return np.asarray([d["embedding"] for d in data], dtype=np.float32)
+                err = f"{resp.status_code} {resp.text[:200]}"
+            except self.requests.RequestException as exc:
+                err = repr(exc)
+            time.sleep(min(2 ** attempt, 30))
+        raise RuntimeError(f"OpenRouter request failed: {err}")
+
+    def count_tokens(self, texts):
+        return sum(
+            len(self.tokenizer(t, add_special_tokens=False, truncation=True, max_length=self.max_length)["input_ids"])
+            for t in texts
+        )
+
+    def encode(self, texts, batch_size=64):
+        from concurrent.futures import ThreadPoolExecutor
+
+        batches = [
+            [self._truncate(t) for t in texts[i:i + batch_size]]
+            for i in range(0, len(texts), batch_size)
+        ]
+        with ThreadPoolExecutor(self.workers) as pool:
+            vecs = list(tqdm(pool.map(self._request, batches), total=len(batches), desc="openrouter encode", unit="batch", leave=False))
+        return np.vstack(vecs)
+
+    def close(self):
+        pass
 
 
 def total_tokens(tokenizer, s1, s2):
@@ -499,7 +632,7 @@ def save_cache(cache):
 
 
 def config_signature(cfg):
-    return {
+    sig = {
         "kind": cfg["kind"],
         "name": cfg["name"],
         "variant": cfg.get("variant"),
@@ -508,6 +641,11 @@ def config_signature(cfg):
         "query_prefix": cfg.get("query_prefix"),
         "passage_prefix": cfg.get("passage_prefix"),
     }
+    # Only recorded when set, so cache keys of earlier configs stay valid.
+    for extra in ("pooling", "max_seq_length", "model_kwargs"):
+        if extra in cfg:
+            sig[extra] = cfg[extra]
+    return sig
 
 
 def cache_key(cfg, benchmark):
@@ -588,13 +726,18 @@ def build_encoder(cfg):
             cfg["name"],
             file_name=cfg.get("file_name", None),
             tokenizer_name=cfg.get("tokenizer_name", None),
+            max_seq_length=cfg.get("max_seq_length"),
+            model_kwargs=cfg.get("model_kwargs"),
         )
     if cfg["kind"] == "gguf":
         return GGUFEncoder(
             cfg["name"],
             cfg["file_name"],
             tokenizer_name=cfg.get("tokenizer_name", None),
+            pooling=cfg.get("pooling", "mean"),
         )
+    if cfg["kind"] == "openrouter":
+        return OpenRouterEncoder(cfg["name"], tokenizer_name=cfg["tokenizer_name"])
 
     return ONNXEncoder(
         cfg["name"],
@@ -642,10 +785,12 @@ if __name__ == "__main__":
     sts_rows = []
     retrieval_rows = []
 
+    only = os.environ.get("BENCH_ONLY")
     for cfg in CONFIGS:
         name = display_name(cfg)
-        print("Loading", name, flush=True)
-        encoder = build_encoder(cfg)
+        if only and not any(o in name for o in only.split(",")):
+            continue
+        encoder = None
         try:
             for benchmark in STS_BENCHMARKS + RETRIEVAL_BENCHMARKS:
                 benchmark_name = benchmark["name"]
@@ -655,6 +800,9 @@ if __name__ == "__main__":
                     result = dict(cache[key])
                     print("Using cached result for", name, benchmark_name, flush=True)
                 else:
+                    if encoder is None:
+                        print("Loading", name, flush=True)
+                        encoder = build_encoder(cfg)
                     loader_name = benchmark["loader"]
                     if loader_name not in loaded_benchmarks:
                         loaded_benchmarks[loader_name] = benchmark_loaders[loader_name]()
@@ -675,6 +823,7 @@ if __name__ == "__main__":
                     retrieval_rows.append(result)
                 print(name, benchmark_name, result, flush=True)
         finally:
-            encoder.close()
+            if encoder is not None:
+                encoder.close()
 
     write_results(sts_rows, retrieval_rows)

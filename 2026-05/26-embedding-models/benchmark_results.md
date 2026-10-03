@@ -48,6 +48,18 @@
 | mykor/granite-embedding-311m-multilingual-r2-GGUF (Q8) | Korean(KLUE-STS val) | 519 | 0.8241 | 0.95 | 21325 | 22383.34 | 0.00184 |
 | google/embeddinggemma-300m | English(STS-B val) | 1500 | 0.8665 | 6.44 | 49015 | 7606.57 | 0.00430 |
 | google/embeddinggemma-300m | Korean(KLUE-STS val) | 519 | 0.8607 | 1.56 | 22363 | 14325.63 | 0.00301 |
+| dragonkue/BGE-m3-ko (original) | English(STS-B val) | 1500 | 0.8722 | 6.38 | 53774 | 8423.26 | 0.00426 |
+| dragonkue/BGE-m3-ko (original) | Korean(KLUE-STS val) | 519 | 0.8867 | 2.47 | 20702 | 8366.88 | 0.00477 |
+| Neuwhufbox/BGE-m3-ko-gguf (Q8_0) | English(STS-B val) | 1500 | 0.8724 | 24.50 | 53774 | 2194.88 | 0.01633 |
+| Neuwhufbox/BGE-m3-ko-gguf (Q8_0) | Korean(KLUE-STS val) | 519 | 0.8864 | 2.26 | 20702 | 9160.32 | 0.00435 |
+| codefuse-ai/F2LLM-v2-1.7B (original) | English(STS-B val) | 1500 | 0.8792 | 7.87 | 46267 | 5876.08 | 0.00525 |
+| codefuse-ai/F2LLM-v2-1.7B (original) | Korean(KLUE-STS val) | 519 | 0.8623 | 3.50 | 25615 | 7312.00 | 0.00675 |
+| mradermacher/F2LLM-v2-1.7B-GGUF (Q8_0) | English(STS-B val) | 1500 | 0.8790 | 18.60 | 43267 | 2326.40 | 0.01240 |
+| mradermacher/F2LLM-v2-1.7B-GGUF (Q8_0) | Korean(KLUE-STS val) | 519 | 0.8619 | 5.05 | 24577 | 4870.91 | 0.00972 |
+| mradermacher/F2LLM-v2-1.7B-GGUF (Q4_K_M) | English(STS-B val) | 1500 | 0.8327 | 19.15 | 43267 | 2259.90 | 0.01276 |
+| mradermacher/F2LLM-v2-1.7B-GGUF (Q4_K_M) | Korean(KLUE-STS val) | 519 | 0.7641 | 5.48 | 24577 | 4482.41 | 0.01056 |
+| mradermacher/Qwen3-Embedding-8B-i1-GGUF (i1-Q4_K_M) | English(STS-B val) | 1500 | 0.8993 | 42.92 | 43267 | 1008.07 | 0.02861 |
+| mradermacher/Qwen3-Embedding-8B-i1-GGUF (i1-Q4_K_M) | Korean(KLUE-STS val) | 519 | 0.8653 | 14.06 | 24577 | 1748.24 | 0.02709 |
 
 ## Retrieval
 
@@ -97,8 +109,23 @@
 | mykor/granite-embedding-311m-multilingual-r2-GGUF (Q8) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.4455 | 0.6114 | 0.6872 | 0.5365 | 309.73 | -1 | 0.00 | 1.46792 |
 | google/embeddinggemma-300m | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.8372 | 0.9070 | 0.9535 | 0.8775 | 19.17 | -1 | 0.00 | 0.44574 |
 | google/embeddinggemma-300m | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.5545 | 0.8009 | 0.8626 | 0.6764 | 221.04 | -1 | 0.00 | 1.04757 |
+| dragonkue/BGE-m3-ko (original) | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.8837 | 1.0000 | 1.0000 | 0.9380 | 66.52 | -1 | 0.00 | 1.54703 |
+| dragonkue/BGE-m3-ko (original) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.6540 | 0.8389 | 0.9005 | 0.7546 | 588.69 | -1 | 0.00 | 2.79001 |
+| Neuwhufbox/BGE-m3-ko-gguf (Q8_0) | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.8605 | 1.0000 | 1.0000 | 0.9264 | 69.66 | -1 | 0.00 | 1.62005 |
+| Neuwhufbox/BGE-m3-ko-gguf (Q8_0) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.6445 | 0.8436 | 0.9005 | 0.7502 | 535.17 | -1 | 0.00 | 2.53637 |
+| codefuse-ai/F2LLM-v2-1.7B (original) | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.9302 | 1.0000 | 1.0000 | 0.9612 | 72.17 | -1 | 0.00 | 1.67842 |
+| codefuse-ai/F2LLM-v2-1.7B (original) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.5261 | 0.7678 | 0.8246 | 0.6523 | 673.87 | -1 | 0.00 | 3.19369 |
+| mradermacher/F2LLM-v2-1.7B-GGUF (Q8_0) | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.9302 | 1.0000 | 1.0000 | 0.9612 | 111.19 | -1 | 0.00 | 2.58579 |
+| mradermacher/F2LLM-v2-1.7B-GGUF (Q8_0) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.5213 | 0.7725 | 0.8246 | 0.6502 | 1414.90 | -1 | 0.00 | 6.70569 |
+| mradermacher/F2LLM-v2-1.7B-GGUF (Q4_K_M) | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.9302 | 0.9767 | 0.9767 | 0.9535 | 117.73 | -1 | 0.00 | 2.73802 |
+| mradermacher/F2LLM-v2-1.7B-GGUF (Q4_K_M) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.4455 | 0.6635 | 0.7299 | 0.5610 | 1452.93 | -1 | 0.00 | 6.88594 |
+| mradermacher/Qwen3-Embedding-8B-i1-GGUF (i1-Q4_K_M) | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.9767 | 1.0000 | 1.0000 | 0.9884 | 322.83 | -1 | 0.00 | 7.50762 |
+| mradermacher/Qwen3-Embedding-8B-i1-GGUF (i1-Q4_K_M) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.6445 | 0.8389 | 0.8863 | 0.7428 | 4125.11 | -1 | 0.00 | 19.55028 |
 
 ## 참고
 
 - second-state/embeddinggemma-300m-GGUF, harrier-oss-v1-270m-GGUF, granite-embedding-311m-multilingual-r2-GGUF 는 RTX 3080 에서 돌렸습니다.
 - google/embeddinggemma-300m 은 RTX 3090 에서 돌렸습니다.
+- mradermacher/Qwen3-Embedding-8B-i1-GGUF, dragonkue/BGE-m3-ko, Neuwhufbox/BGE-m3-ko-gguf, codefuse-ai/F2LLM-v2-1.7B, mradermacher/F2LLM-v2-1.7B-GGUF 는 RTX 3080 에서 돌렸습니다.
+- 신규 모델의 입력은 256 토큰으로 잘랐고, Qwen3-Embedding 은 query 에 `Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery:`, F2LLM 은 `Instruct: Given a question, retrieve passages that can help answer the question.\nQuery: ` 를 붙였습니다 (retrieval 만 해당). pooling 은 Qwen3/F2LLM=last token, BGE-m3-ko=CLS.
+- OpenRouter(Qwen3-Embedding-8B/4B) 는 소요 시간 문제로 제외했습니다.
