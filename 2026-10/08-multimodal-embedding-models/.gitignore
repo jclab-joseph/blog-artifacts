@@ -1,0 +1,4 @@
+.env
+emb_cache/
+__pycache__/
+*.log
