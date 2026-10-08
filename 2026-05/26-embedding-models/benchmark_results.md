@@ -62,6 +62,12 @@
 | mradermacher/Qwen3-Embedding-8B-i1-GGUF (i1-Q4_K_M) | Korean(KLUE-STS val) | 519 | 0.8653 | 14.06 | 24577 | 1748.24 | 0.02709 |
 | upstage/solar-embedding-2 (query+passage) | English(STS-B val) | 1500 | 0.8579 | 31.69 | 43267 | 1365.51 | 0.02112 |
 | upstage/solar-embedding-2 (query+passage) | Korean(KLUE-STS val) | 519 | 0.8100 | 11.53 | 24577 | 2132.27 | 0.02221 |
+| google/embeddinggemma-2 (original) | English(STS-B val) | 1500 | 0.8470 | 2.28 | 49015 | 21483.97 | 0.00152 |
+| google/embeddinggemma-2 (original) | Korean(KLUE-STS val) | 519 | 0.8203 | 0.73 | 22363 | 30843.13 | 0.00140 |
+| unsloth/embeddinggemma-2-GGUF (Q8_0) | English(STS-B val) | 1500 | 0.8469 | 13.88 | 49015 | 3530.09 | 0.00926 |
+| unsloth/embeddinggemma-2-GGUF (Q8_0) | Korean(KLUE-STS val) | 519 | 0.8198 | 0.83 | 22363 | 27013.78 | 0.00160 |
+| unsloth/embeddinggemma-2-GGUF (UD-Q4_K_XL) | English(STS-B val) | 1500 | 0.8468 | 13.63 | 49015 | 3595.14 | 0.00909 |
+| unsloth/embeddinggemma-2-GGUF (UD-Q4_K_XL) | Korean(KLUE-STS val) | 519 | 0.8175 | 0.83 | 22363 | 26792.17 | 0.00161 |
 
 ## Retrieval
 
@@ -125,6 +131,12 @@
 | mradermacher/Qwen3-Embedding-8B-i1-GGUF (i1-Q4_K_M) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.6445 | 0.8389 | 0.8863 | 0.7428 | 4125.11 | -1 | 0.00 | 19.55028 |
 | upstage/solar-embedding-2 (query+passage) | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.9070 | 0.9767 | 1.0000 | 0.9438 | 121.18 | -1 | 0.00 | 2.81807 |
 | upstage/solar-embedding-2 (query+passage) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.5972 | 0.7867 | 0.8673 | 0.7064 | 1549.09 | -1 | 0.00 | 7.34166 |
+| google/embeddinggemma-2 (original) | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.8372 | 0.9302 | 0.9767 | 0.8903 | 13.14 | -1 | 0.00 | 0.30564 |
+| google/embeddinggemma-2 (original) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.5308 | 0.7725 | 0.8578 | 0.6537 | 154.80 | -1 | 0.00 | 0.73364 |
+| unsloth/embeddinggemma-2-GGUF (Q8_0) | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.8372 | 0.9302 | 0.9767 | 0.8903 | 34.27 | -1 | 0.00 | 0.79687 |
+| unsloth/embeddinggemma-2-GGUF (Q8_0) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.5166 | 0.7773 | 0.8483 | 0.6453 | 216.21 | -1 | 0.00 | 1.02467 |
+| unsloth/embeddinggemma-2-GGUF (UD-Q4_K_XL) | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.8372 | 0.9535 | 0.9767 | 0.8973 | 34.85 | -1 | 0.00 | 0.81057 |
+| unsloth/embeddinggemma-2-GGUF (UD-Q4_K_XL) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.5024 | 0.7725 | 0.8389 | 0.6370 | 218.37 | -1 | 0.00 | 1.03491 |
 
 ## 참고
 
@@ -134,3 +146,4 @@
 - 신규 모델의 입력은 256 토큰으로 잘랐고, Qwen3-Embedding 은 query 에 `Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery:`, F2LLM 은 `Instruct: Given a question, retrieve passages that can help answer the question.\nQuery: ` 를 붙였습니다 (retrieval 만 해당). pooling 은 Qwen3/F2LLM=last token, BGE-m3-ko=CLS.
 - OpenRouter(Qwen3-Embedding-8B/4B) 는 소요 시간 문제로 제외했습니다.
 - upstage/solar-embedding-2 는 Upstage API 로 돌렸습니다. retrieval 은 query 에 `solar-embedding-2-query`, 문서에 `solar-embedding-2-passage` 를 썼고, STS 는 양쪽 문장 모두 `solar-embedding-2-passage` 를 썼습니다. query 지시문은 서버 측에서 붙으므로 prefix 는 붙이지 않았습니다. 입력은 Qwen3 토크나이저(API 토큰 수와 일치)로 256 토큰으로 잘랐고, 소요 시간은 API rate limit(100 RPM / 300K TPM)에 맞춘 페이싱이 포함된 값입니다.
+- google/embeddinggemma-2, unsloth/embeddinggemma-2-GGUF 는 RTX 3090 에서 돌렸습니다. 입력은 256 토큰으로 잘랐고, 모델 카드의 `task: search result | query: ` (query) / `title: none | text: ` (문서) prefix 를 썼습니다 (retrieval 만 해당). GGUF 는 llama-cpp-python 0.3.36 에 llama.cpp `4fbc76dec5` (gemma-embedding2 지원 커밋)를 넣어 빌드했고, 출력 차원(768)이 hidden(512)과 달라 `llama_model_n_embd_out` 으로 크기를 맞췄습니다.

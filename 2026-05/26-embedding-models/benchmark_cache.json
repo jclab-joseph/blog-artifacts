@@ -39,6 +39,26 @@
     "tokens": 43267,
     "tokens_per_s": 1008.0666463587453
   },
+  "{\"benchmark\": {\"loader\": \"load_english_stsb\", \"name\": \"English(STS-B val)\", \"type\": \"sts\"}, \"config\": {\"file_name\": \"embeddinggemma-2-Q8_0.gguf\", \"kind\": \"gguf\", \"name\": \"unsloth/embeddinggemma-2-GGUF\", \"passage_prefix\": \"title: none | text: \", \"query_prefix\": \"task: search result | query: \", \"tokenizer_name\": \"google/embeddinggemma-2\", \"variant\": \"Q8_0\"}, \"implementation_version\": 2}": {
+    "dataset": "English(STS-B val)",
+    "elapsed_s": 13.884897720068693,
+    "model": "unsloth/embeddinggemma-2-GGUF (Q8_0)",
+    "samples": 1500,
+    "sec_per_pair": 0.009256598480045796,
+    "spearman": 0.8469013330869256,
+    "tokens": 49015,
+    "tokens_per_s": 3530.094422601012
+  },
+  "{\"benchmark\": {\"loader\": \"load_english_stsb\", \"name\": \"English(STS-B val)\", \"type\": \"sts\"}, \"config\": {\"file_name\": \"embeddinggemma-2-UD-Q4_K_XL.gguf\", \"kind\": \"gguf\", \"name\": \"unsloth/embeddinggemma-2-GGUF\", \"passage_prefix\": \"title: none | text: \", \"query_prefix\": \"task: search result | query: \", \"tokenizer_name\": \"google/embeddinggemma-2\", \"variant\": \"UD-Q4_K_XL\"}, \"implementation_version\": 2}": {
+    "dataset": "English(STS-B val)",
+    "elapsed_s": 13.633677043020725,
+    "model": "unsloth/embeddinggemma-2-GGUF (UD-Q4_K_XL)",
+    "samples": 1500,
+    "sec_per_pair": 0.009089118028680484,
+    "spearman": 0.8467804949255644,
+    "tokens": 49015,
+    "tokens_per_s": 3595.1416367964707
+  },
   "{\"benchmark\": {\"loader\": \"load_english_stsb\", \"name\": \"English(STS-B val)\", \"type\": \"sts\"}, \"config\": {\"file_name\": \"embeddinggemma-300M-Q8_0.gguf\", \"kind\": \"gguf\", \"name\": \"unsloth/embeddinggemma-300m-GGUF\", \"passage_prefix\": \"title: \\\"none\\\" | text: \", \"query_prefix\": \"query: \", \"tokenizer_name\": \"google/embeddinggemma-300m\", \"variant\": \"Q8_0\"}, \"implementation_version\": 2}": {
     "dataset": "English(STS-B val)",
     "elapsed_s": 104.94514463399537,
@@ -78,6 +98,16 @@
     "spearman": 0.8721716153545523,
     "tokens": 53774,
     "tokens_per_s": 8423.260086332464
+  },
+  "{\"benchmark\": {\"loader\": \"load_english_stsb\", \"name\": \"English(STS-B val)\", \"type\": \"sts\"}, \"config\": {\"file_name\": null, \"kind\": \"sbert\", \"max_seq_length\": 256, \"name\": \"google/embeddinggemma-2\", \"passage_prefix\": \"title: none | text: \", \"query_prefix\": \"task: search result | query: \", \"tokenizer_name\": null, \"variant\": \"original\"}, \"implementation_version\": 1}": {
+    "dataset": "English(STS-B val)",
+    "elapsed_s": 2.281468669883907,
+    "model": "google/embeddinggemma-2 (original)",
+    "samples": 1500,
+    "sec_per_pair": 0.0015209791132559378,
+    "spearman": 0.8469707471781232,
+    "tokens": 49015,
+    "tokens_per_s": 21483.968045239097
   },
   "{\"benchmark\": {\"loader\": \"load_english_stsb\", \"name\": \"English(STS-B val)\", \"type\": \"sts\"}, \"config\": {\"file_name\": null, \"kind\": \"sbert\", \"name\": \"google/embeddinggemma-300m\", \"passage_prefix\": \"title: \\\"none\\\" | text: \", \"query_prefix\": \"query: \", \"tokenizer_name\": null, \"variant\": null}, \"implementation_version\": 1}": {
     "dataset": "English(STS-B val)",
@@ -149,6 +179,26 @@
     "tokens": 24577,
     "tokens_per_s": 1748.2395654031507
   },
+  "{\"benchmark\": {\"loader\": \"load_korean_klue_sts\", \"name\": \"Korean(KLUE-STS val)\", \"type\": \"sts\"}, \"config\": {\"file_name\": \"embeddinggemma-2-Q8_0.gguf\", \"kind\": \"gguf\", \"name\": \"unsloth/embeddinggemma-2-GGUF\", \"passage_prefix\": \"title: none | text: \", \"query_prefix\": \"task: search result | query: \", \"tokenizer_name\": \"google/embeddinggemma-2\", \"variant\": \"Q8_0\"}, \"implementation_version\": 2}": {
+    "dataset": "Korean(KLUE-STS val)",
+    "elapsed_s": 0.827836636453867,
+    "model": "unsloth/embeddinggemma-2-GGUF (Q8_0)",
+    "samples": 519,
+    "sec_per_pair": 0.0015950609565585105,
+    "spearman": 0.8198299301400666,
+    "tokens": 22363,
+    "tokens_per_s": 27013.783897985562
+  },
+  "{\"benchmark\": {\"loader\": \"load_korean_klue_sts\", \"name\": \"Korean(KLUE-STS val)\", \"type\": \"sts\"}, \"config\": {\"file_name\": \"embeddinggemma-2-UD-Q4_K_XL.gguf\", \"kind\": \"gguf\", \"name\": \"unsloth/embeddinggemma-2-GGUF\", \"passage_prefix\": \"title: none | text: \", \"query_prefix\": \"task: search result | query: \", \"tokenizer_name\": \"google/embeddinggemma-2\", \"variant\": \"UD-Q4_K_XL\"}, \"implementation_version\": 2}": {
+    "dataset": "Korean(KLUE-STS val)",
+    "elapsed_s": 0.8346840562298894,
+    "model": "unsloth/embeddinggemma-2-GGUF (UD-Q4_K_XL)",
+    "samples": 519,
+    "sec_per_pair": 0.0016082544436028696,
+    "spearman": 0.8174887422781295,
+    "tokens": 22363,
+    "tokens_per_s": 26792.173437467412
+  },
   "{\"benchmark\": {\"loader\": \"load_korean_klue_sts\", \"name\": \"Korean(KLUE-STS val)\", \"type\": \"sts\"}, \"config\": {\"file_name\": \"embeddinggemma-300M-Q8_0.gguf\", \"kind\": \"gguf\", \"name\": \"unsloth/embeddinggemma-300m-GGUF\", \"passage_prefix\": \"title: \\\"none\\\" | text: \", \"query_prefix\": \"query: \", \"tokenizer_name\": \"google/embeddinggemma-300m\", \"variant\": \"Q8_0\"}, \"implementation_version\": 2}": {
     "elapsed_s": 47.367055572976824,
     "samples": 519,
@@ -186,6 +236,16 @@
     "spearman": 0.8867084411644334,
     "tokens": 20702,
     "tokens_per_s": 8366.884275717643
+  },
+  "{\"benchmark\": {\"loader\": \"load_korean_klue_sts\", \"name\": \"Korean(KLUE-STS val)\", \"type\": \"sts\"}, \"config\": {\"file_name\": null, \"kind\": \"sbert\", \"max_seq_length\": 256, \"name\": \"google/embeddinggemma-2\", \"passage_prefix\": \"title: none | text: \", \"query_prefix\": \"task: search result | query: \", \"tokenizer_name\": null, \"variant\": \"original\"}, \"implementation_version\": 1}": {
+    "dataset": "Korean(KLUE-STS val)",
+    "elapsed_s": 0.7250560726970434,
+    "model": "google/embeddinggemma-2 (original)",
+    "samples": 519,
+    "sec_per_pair": 0.0013970251882409314,
+    "spearman": 0.8202858488152706,
+    "tokens": 22363,
+    "tokens_per_s": 30843.13178264232
   },
   "{\"benchmark\": {\"loader\": \"load_korean_klue_sts\", \"name\": \"Korean(KLUE-STS val)\", \"type\": \"sts\"}, \"config\": {\"file_name\": null, \"kind\": \"sbert\", \"name\": \"google/embeddinggemma-300m\", \"passage_prefix\": \"title: \\\"none\\\" | text: \", \"query_prefix\": \"query: \", \"tokenizer_name\": null, \"variant\": null}, \"implementation_version\": 1}": {
     "dataset": "Korean(KLUE-STS val)",
@@ -269,6 +329,32 @@
     "tokens": -1,
     "tokens_per_s": 0.0
   },
+  "{\"benchmark\": {\"loader\": \"load_miracl_ko\", \"name\": \"Korean(MIRACL-ko top250 train)\", \"type\": \"retrieval\"}, \"config\": {\"file_name\": \"embeddinggemma-2-Q8_0.gguf\", \"kind\": \"gguf\", \"name\": \"unsloth/embeddinggemma-2-GGUF\", \"passage_prefix\": \"title: none | text: \", \"query_prefix\": \"task: search result | query: \", \"tokenizer_name\": \"google/embeddinggemma-2\", \"variant\": \"Q8_0\"}, \"implementation_version\": 2}": {
+    "dataset": "Korean(MIRACL-ko top250 train)",
+    "documents": 43421,
+    "elapsed_s": 216.20524991396815,
+    "model": "unsloth/embeddinggemma-2-GGUF (Q8_0)",
+    "mrr@5": 0.6453396524486573,
+    "queries": 211,
+    "recall@1": 0.5165876777251185,
+    "recall@3": 0.7772511848341233,
+    "recall@5": 0.8483412322274881,
+    "sec_per_query": 1.0246694308718869,
+    "tokens": -1,
+    "tokens_per_s": 0.0
+  },
+  "{\"benchmark\": {\"loader\": \"load_miracl_ko\", \"name\": \"Korean(MIRACL-ko top250 train)\", \"type\": \"retrieval\"}, \"config\": {\"file_name\": \"embeddinggemma-2-UD-Q4_K_XL.gguf\", \"kind\": \"gguf\", \"name\": \"unsloth/embeddinggemma-2-GGUF\", \"passage_prefix\": \"title: none | text: \", \"query_prefix\": \"task: search result | query: \", \"tokenizer_name\": \"google/embeddinggemma-2\", \"variant\": \"UD-Q4_K_XL\"}, \"implementation_version\": 2}": {
+    "documents": 43421,
+    "elapsed_s": 218.36546425521374,
+    "mrr@5": 0.6370458135860979,
+    "queries": 211,
+    "recall@1": 0.5023696682464455,
+    "recall@3": 0.7725118483412322,
+    "recall@5": 0.8388625592417062,
+    "sec_per_query": 1.0349074135318186,
+    "tokens": -1,
+    "tokens_per_s": 0.0
+  },
   "{\"benchmark\": {\"loader\": \"load_miracl_ko\", \"name\": \"Korean(MIRACL-ko top250 train)\", \"type\": \"retrieval\"}, \"config\": {\"file_name\": \"embeddinggemma-300m-Q4_K_M.gguf\", \"kind\": \"gguf\", \"name\": \"second-state/embeddinggemma-300m-GGUF\", \"passage_prefix\": \"title: \\\"none\\\" | text: \", \"query_prefix\": \"query: \", \"tokenizer_name\": \"google/embeddinggemma-300m\", \"variant\": \"Q4_K_M\"}, \"implementation_version\": 2}": {
     "documents": 43421,
     "elapsed_s": 257.48256841883995,
@@ -304,6 +390,18 @@
     "recall@3": 0.8388625592417062,
     "recall@5": 0.9004739336492891,
     "sec_per_query": 2.7900129510751834,
+    "tokens": -1,
+    "tokens_per_s": 0.0
+  },
+  "{\"benchmark\": {\"loader\": \"load_miracl_ko\", \"name\": \"Korean(MIRACL-ko top250 train)\", \"type\": \"retrieval\"}, \"config\": {\"file_name\": null, \"kind\": \"sbert\", \"max_seq_length\": 256, \"name\": \"google/embeddinggemma-2\", \"passage_prefix\": \"title: none | text: \", \"query_prefix\": \"task: search result | query: \", \"tokenizer_name\": null, \"variant\": \"original\"}, \"implementation_version\": 1}": {
+    "documents": 43421,
+    "elapsed_s": 154.797178927809,
+    "mrr@5": 0.6537124802527646,
+    "queries": 211,
+    "recall@1": 0.5308056872037915,
+    "recall@3": 0.7725118483412322,
+    "recall@5": 0.8578199052132701,
+    "sec_per_query": 0.7336359190891422,
     "tokens": -1,
     "tokens_per_s": 0.0
   },
@@ -375,6 +473,34 @@
     "tokens": -1,
     "tokens_per_s": 0.0
   },
+  "{\"benchmark\": {\"loader\": \"load_msmarco_passage_ranking\", \"name\": \"English(MSMARCO Passage Ranking top250 test)\", \"type\": \"retrieval\"}, \"config\": {\"file_name\": \"embeddinggemma-2-Q8_0.gguf\", \"kind\": \"gguf\", \"name\": \"unsloth/embeddinggemma-2-GGUF\", \"passage_prefix\": \"title: none | text: \", \"query_prefix\": \"task: search result | query: \", \"tokenizer_name\": \"google/embeddinggemma-2\", \"variant\": \"Q8_0\"}, \"implementation_version\": 2}": {
+    "dataset": "English(MSMARCO Passage Ranking top250 test)",
+    "documents": 6609,
+    "elapsed_s": 34.265340104699135,
+    "model": "unsloth/embeddinggemma-2-GGUF (Q8_0)",
+    "mrr@5": 0.89031007751938,
+    "queries": 43,
+    "recall@1": 0.8372093023255814,
+    "recall@3": 0.9302325581395349,
+    "recall@5": 0.9767441860465116,
+    "sec_per_query": 0.7968683745278868,
+    "tokens": -1,
+    "tokens_per_s": 0.0
+  },
+  "{\"benchmark\": {\"loader\": \"load_msmarco_passage_ranking\", \"name\": \"English(MSMARCO Passage Ranking top250 test)\", \"type\": \"retrieval\"}, \"config\": {\"file_name\": \"embeddinggemma-2-UD-Q4_K_XL.gguf\", \"kind\": \"gguf\", \"name\": \"unsloth/embeddinggemma-2-GGUF\", \"passage_prefix\": \"title: none | text: \", \"query_prefix\": \"task: search result | query: \", \"tokenizer_name\": \"google/embeddinggemma-2\", \"variant\": \"UD-Q4_K_XL\"}, \"implementation_version\": 2}": {
+    "dataset": "English(MSMARCO Passage Ranking top250 test)",
+    "documents": 6609,
+    "elapsed_s": 34.85469922795892,
+    "model": "unsloth/embeddinggemma-2-GGUF (UD-Q4_K_XL)",
+    "mrr@5": 0.8972868217054263,
+    "queries": 43,
+    "recall@1": 0.8372093023255814,
+    "recall@3": 0.9534883720930233,
+    "recall@5": 0.9767441860465116,
+    "sec_per_query": 0.8105744006502074,
+    "tokens": -1,
+    "tokens_per_s": 0.0
+  },
   "{\"benchmark\": {\"loader\": \"load_msmarco_passage_ranking\", \"name\": \"English(MSMARCO Passage Ranking top250 test)\", \"type\": \"retrieval\"}, \"config\": {\"file_name\": \"embeddinggemma-300m-Q4_K_M.gguf\", \"kind\": \"gguf\", \"name\": \"second-state/embeddinggemma-300m-GGUF\", \"passage_prefix\": \"title: \\\"none\\\" | text: \", \"query_prefix\": \"query: \", \"tokenizer_name\": \"google/embeddinggemma-300m\", \"variant\": \"Q4_K_M\"}, \"implementation_version\": 2}": {
     "dataset": "English(MSMARCO Passage Ranking top250 test)",
     "documents": 6609,
@@ -414,6 +540,20 @@
     "recall@3": 1.0,
     "recall@5": 1.0,
     "sec_per_query": 1.547028232019308,
+    "tokens": -1,
+    "tokens_per_s": 0.0
+  },
+  "{\"benchmark\": {\"loader\": \"load_msmarco_passage_ranking\", \"name\": \"English(MSMARCO Passage Ranking top250 test)\", \"type\": \"retrieval\"}, \"config\": {\"file_name\": null, \"kind\": \"sbert\", \"max_seq_length\": 256, \"name\": \"google/embeddinggemma-2\", \"passage_prefix\": \"title: none | text: \", \"query_prefix\": \"task: search result | query: \", \"tokenizer_name\": null, \"variant\": \"original\"}, \"implementation_version\": 1}": {
+    "dataset": "English(MSMARCO Passage Ranking top250 test)",
+    "documents": 6609,
+    "elapsed_s": 13.14234864898026,
+    "model": "google/embeddinggemma-2 (original)",
+    "mrr@5": 0.89031007751938,
+    "queries": 43,
+    "recall@1": 0.8372093023255814,
+    "recall@3": 0.9302325581395349,
+    "recall@5": 0.9767441860465116,
+    "sec_per_query": 0.30563601509256416,
     "tokens": -1,
     "tokens_per_s": 0.0
   },

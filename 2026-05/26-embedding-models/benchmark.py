@@ -17,6 +17,9 @@ import torch
 
 QWEN3_QUERY_PREFIX = "Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery:"
 F2LLM_QUERY_PREFIX = "Instruct: Given a question, retrieve passages that can help answer the question.\nQuery: "
+# SearchQuery / Document prompts from the google/embeddinggemma-2 model card.
+GEMMA2_QUERY_PREFIX = "task: search result | query: "
+GEMMA2_PASSAGE_PREFIX = "title: none | text: "
 
 CONFIGS = [
     {"name": "jhgan/ko-sbert-sts", "kind": "sbert"},
@@ -237,6 +240,32 @@ CONFIGS = [
         "query_prefix": "",
         "passage_prefix": "",
     },
+    {
+        "name": "google/embeddinggemma-2",
+        "kind": "sbert",
+        "variant": "original",
+        "max_seq_length": 256,
+        "query_prefix": GEMMA2_QUERY_PREFIX,
+        "passage_prefix": GEMMA2_PASSAGE_PREFIX,
+    },
+    {
+        "name": "unsloth/embeddinggemma-2-GGUF",
+        "kind": "gguf",
+        "file_name": "embeddinggemma-2-Q8_0.gguf",
+        "variant": "Q8_0",
+        "tokenizer_name": "google/embeddinggemma-2",
+        "query_prefix": GEMMA2_QUERY_PREFIX,
+        "passage_prefix": GEMMA2_PASSAGE_PREFIX,
+    },
+    {
+        "name": "unsloth/embeddinggemma-2-GGUF",
+        "kind": "gguf",
+        "file_name": "embeddinggemma-2-UD-Q4_K_XL.gguf",
+        "variant": "UD-Q4_K_XL",
+        "tokenizer_name": "google/embeddinggemma-2",
+        "query_prefix": GEMMA2_QUERY_PREFIX,
+        "passage_prefix": GEMMA2_PASSAGE_PREFIX,
+    },
 ]
 
 IMPLEMENTATION_VERSIONS = {
@@ -398,6 +427,12 @@ class GGUFEncoder:
             verbose=False,
             n_gpu_layers=-1,
         )
+        # llama-cpp-python slices pooled embeddings to n_embd (the hidden size),
+        # silently truncating models with a separate output projection, e.g.
+        # embeddinggemma-2 (512 hidden -> 768 out). Equal for all other models.
+        if hasattr(llama_cpp, "llama_model_n_embd_out"):
+            n_embd_out = llama_cpp.llama_model_n_embd_out(self.model._model.model)
+            self.model.n_embd = lambda: n_embd_out
 
         if not llama_cpp.llama_supports_gpu_offload():
             print(
