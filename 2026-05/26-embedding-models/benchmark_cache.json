@@ -99,6 +99,16 @@
     "tokens": 84667,
     "tokens_per_s": 939.2427153671088
   },
+  "{\"benchmark\": {\"loader\": \"load_english_stsb\", \"name\": \"English(STS-B val)\", \"type\": \"sts\"}, \"config\": {\"file_name\": null, \"kind\": \"upstage\", \"name\": \"upstage/solar-embedding-2\", \"passage_model\": \"solar-embedding-2-passage\", \"passage_prefix\": \"\", \"query_model\": \"solar-embedding-2-query\", \"query_prefix\": \"\", \"tokenizer_name\": \"Qwen/Qwen3-Embedding-8B\", \"variant\": \"query+passage\"}, \"implementation_version\": 1}": {
+    "dataset": "English(STS-B val)",
+    "elapsed_s": 31.68559785094112,
+    "model": "upstage/solar-embedding-2 (query+passage)",
+    "samples": 1500,
+    "sec_per_pair": 0.021123731900627413,
+    "spearman": 0.8578938048022304,
+    "tokens": 43267,
+    "tokens_per_s": 1365.5099772313397
+  },
   "{\"benchmark\": {\"loader\": \"load_korean_klue_sts\", \"name\": \"Korean(KLUE-STS val)\", \"type\": \"sts\"}, \"config\": {\"file_name\": \"BGE-M3-567M-Q8_0.gguf\", \"kind\": \"gguf\", \"name\": \"Neuwhufbox/BGE-m3-ko-gguf\", \"passage_prefix\": \"\", \"pooling\": \"cls\", \"query_prefix\": \"\", \"tokenizer_name\": null, \"variant\": \"Q8_0\"}, \"implementation_version\": 2}": {
     "dataset": "Korean(KLUE-STS val)",
     "elapsed_s": 2.259963544085622,
@@ -195,6 +205,16 @@
     "tokens": 20184,
     "tokens_per_s": 725.5557249437328
   },
+  "{\"benchmark\": {\"loader\": \"load_korean_klue_sts\", \"name\": \"Korean(KLUE-STS val)\", \"type\": \"sts\"}, \"config\": {\"file_name\": null, \"kind\": \"upstage\", \"name\": \"upstage/solar-embedding-2\", \"passage_model\": \"solar-embedding-2-passage\", \"passage_prefix\": \"\", \"query_model\": \"solar-embedding-2-query\", \"query_prefix\": \"\", \"tokenizer_name\": \"Qwen/Qwen3-Embedding-8B\", \"variant\": \"query+passage\"}, \"implementation_version\": 1}": {
+    "dataset": "Korean(KLUE-STS val)",
+    "elapsed_s": 11.526219403953291,
+    "model": "upstage/solar-embedding-2 (query+passage)",
+    "samples": 519,
+    "sec_per_pair": 0.022208515229197093,
+    "spearman": 0.8099633054848494,
+    "tokens": 24577,
+    "tokens_per_s": 2132.26897204217
+  },
   "{\"benchmark\": {\"loader\": \"load_miracl_ko\", \"name\": \"Korean(MIRACL-ko top250 train)\", \"type\": \"retrieval\"}, \"config\": {\"file_name\": \"BGE-M3-567M-Q8_0.gguf\", \"kind\": \"gguf\", \"name\": \"Neuwhufbox/BGE-m3-ko-gguf\", \"passage_prefix\": \"\", \"pooling\": \"cls\", \"query_prefix\": \"\", \"tokenizer_name\": null, \"variant\": \"Q8_0\"}, \"implementation_version\": 2}": {
     "dataset": "Korean(MIRACL-ko top250 train)",
     "documents": 43421,
@@ -284,6 +304,18 @@
     "recall@3": 0.8388625592417062,
     "recall@5": 0.9004739336492891,
     "sec_per_query": 2.7900129510751834,
+    "tokens": -1,
+    "tokens_per_s": 0.0
+  },
+  "{\"benchmark\": {\"loader\": \"load_miracl_ko\", \"name\": \"Korean(MIRACL-ko top250 train)\", \"type\": \"retrieval\"}, \"config\": {\"file_name\": null, \"kind\": \"upstage\", \"name\": \"upstage/solar-embedding-2\", \"passage_model\": \"solar-embedding-2-passage\", \"passage_prefix\": \"\", \"query_model\": \"solar-embedding-2-query\", \"query_prefix\": \"\", \"tokenizer_name\": \"Qwen/Qwen3-Embedding-8B\", \"variant\": \"query+passage\"}, \"implementation_version\": 1}": {
+    "documents": 43421,
+    "elapsed_s": 1549.0900009491015,
+    "mrr@5": 0.7063981042654027,
+    "queries": 211,
+    "recall@1": 0.5971563981042654,
+    "recall@3": 0.7867298578199052,
+    "recall@5": 0.8672985781990521,
+    "sec_per_query": 7.341658772270623,
     "tokens": -1,
     "tokens_per_s": 0.0
   },
@@ -382,6 +414,20 @@
     "recall@3": 1.0,
     "recall@5": 1.0,
     "sec_per_query": 1.547028232019308,
+    "tokens": -1,
+    "tokens_per_s": 0.0
+  },
+  "{\"benchmark\": {\"loader\": \"load_msmarco_passage_ranking\", \"name\": \"English(MSMARCO Passage Ranking top250 test)\", \"type\": \"retrieval\"}, \"config\": {\"file_name\": null, \"kind\": \"upstage\", \"name\": \"upstage/solar-embedding-2\", \"passage_model\": \"solar-embedding-2-passage\", \"passage_prefix\": \"\", \"query_model\": \"solar-embedding-2-query\", \"query_prefix\": \"\", \"tokenizer_name\": \"Qwen/Qwen3-Embedding-8B\", \"variant\": \"query+passage\"}, \"implementation_version\": 1}": {
+    "dataset": "English(MSMARCO Passage Ranking top250 test)",
+    "documents": 6609,
+    "elapsed_s": 121.17683522298466,
+    "model": "upstage/solar-embedding-2 (query+passage)",
+    "mrr@5": 0.9437984496124031,
+    "queries": 43,
+    "recall@1": 0.9069767441860465,
+    "recall@3": 0.9767441860465116,
+    "recall@5": 1.0,
+    "sec_per_query": 2.818065935418248,
     "tokens": -1,
     "tokens_per_s": 0.0
   }

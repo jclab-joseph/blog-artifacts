@@ -223,6 +223,20 @@ CONFIGS = [
         "query_prefix": F2LLM_QUERY_PREFIX,
         "passage_prefix": "",
     },
+    {
+        # Retrieval embeds queries with the query model and documents with the
+        # passage model; STS sentence pairs use the passage model on both sides.
+        # The query model adds its own instruction server-side, so no prefix.
+        "name": "upstage/solar-embedding-2",
+        "kind": "upstage",
+        "variant": "query+passage",
+        "query_model": "solar-embedding-2-query",
+        "passage_model": "solar-embedding-2-passage",
+        # Matches the API's reported token usage (+1 special token per text).
+        "tokenizer_name": "Qwen/Qwen3-Embedding-8B",
+        "query_prefix": "",
+        "passage_prefix": "",
+    },
 ]
 
 IMPLEMENTATION_VERSIONS = {
@@ -230,6 +244,7 @@ IMPLEMENTATION_VERSIONS = {
     "onnx": 1,
     "gguf": 2,
     "openrouter": 1,
+    "upstage": 1,
 }
 
 CACHE_PATH = Path(os.environ["BENCH_CACHE"]) if os.environ.get("BENCH_CACHE") else Path(__file__).with_name("benchmark_cache.json")
@@ -508,6 +523,105 @@ class OpenRouterEncoder:
         pass
 
 
+class UpstageEncoder:
+    """Embeddings via the Upstage API; inputs are truncated locally to 256 tokens.
+
+    Upstage splits retrieval into a query model and a passage model, so
+    encode() uses the passage model and encode_queries() the query model.
+    """
+
+    URL = "https://api.upstage.ai/v1/embeddings"
+    # Documented limits are 100 RPM / 300K TPM; stay a little under both.
+    REQUESTS_PER_MIN = 90
+    TOKENS_PER_MIN = 270_000
+    # Per-text tokens the API bills on top of our local count: one special
+    # token, plus the query model's server-side instruction (measured).
+    PASSAGE_OVERHEAD = 1
+    QUERY_OVERHEAD = 18
+
+    def __init__(self, query_model, passage_model, tokenizer_name, workers=8):
+        import threading
+
+        import requests
+
+        self.requests = requests
+        self.query_model = query_model
+        self.passage_model = passage_model
+        self.workers = workers
+        self.max_length = 256
+        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
+        self.api_key = os.environ.get("UPSTAGE_API_KEY")
+        if not self.api_key:
+            for line in Path(__file__).with_name(".env").read_text().splitlines():
+                if line.startswith("UPSTAGE_API_KEY="):
+                    self.api_key = line.split("=", 1)[1].strip().strip('"\'')
+        if not self.api_key:
+            raise RuntimeError("UPSTAGE_API_KEY is not set")
+        self._lock = threading.Lock()
+        self._next_free = 0.0
+
+    def _ids(self, text):
+        return self.tokenizer(text, add_special_tokens=False, truncation=True, max_length=self.max_length)["input_ids"]
+
+    def _throttle(self, tokens):
+        # Paces requests so both the request and token rates stay under the
+        # limits, instead of bursting into 429s and backing off.
+        cost = max(60 / self.REQUESTS_PER_MIN, tokens * 60 / self.TOKENS_PER_MIN)
+        with self._lock:
+            now = time.monotonic()
+            start = max(self._next_free, now)
+            self._next_free = start + cost
+        time.sleep(start - now)
+
+    def _request(self, model, batch, tokens):
+        err = None
+        for attempt in range(8):
+            self._throttle(tokens)
+            try:
+                resp = self.requests.post(
+                    self.URL,
+                    headers={"Authorization": f"Bearer {self.api_key}"},
+                    json={"model": model, "input": batch},
+                    timeout=180,
+                )
+                if resp.status_code == 200:
+                    data = sorted(resp.json()["data"], key=lambda x: x["index"])
+                    return np.asarray([d["embedding"] for d in data], dtype=np.float32)
+                err = f"{resp.status_code} {resp.text[:200]}"
+                if 400 <= resp.status_code < 500 and resp.status_code != 429:
+                    break
+            except self.requests.RequestException as exc:
+                err = repr(exc)
+            time.sleep(min(2 ** attempt, 60))
+        raise RuntimeError(f"Upstage request failed: {err}")
+
+    def count_tokens(self, texts):
+        return sum(len(self._ids(t)) for t in texts)
+
+    def _encode(self, model, overhead, texts, batch_size):
+        from concurrent.futures import ThreadPoolExecutor
+
+        jobs = []
+        for i in range(0, len(texts), batch_size):
+            ids = [self._ids(t) for t in texts[i:i + batch_size]]
+            tokens = sum(len(x) + overhead for x in ids)
+            jobs.append(([self.tokenizer.decode(x) for x in ids], tokens))
+
+        with ThreadPoolExecutor(self.workers) as pool:
+            futures = [pool.submit(self._request, model, batch, tokens) for batch, tokens in jobs]
+            vecs = [f.result() for f in tqdm(futures, desc="upstage encode", unit="batch", leave=False)]
+        return np.vstack(vecs)
+
+    def encode(self, texts, batch_size=64):
+        return self._encode(self.passage_model, self.PASSAGE_OVERHEAD, texts, batch_size)
+
+    def encode_queries(self, texts, batch_size=64):
+        return self._encode(self.query_model, self.QUERY_OVERHEAD, texts, batch_size)
+
+    def close(self):
+        pass
+
+
 def total_tokens(tokenizer, s1, s2):
     c1 = sum(len(tokenizer(x, truncation=True, max_length=256)["input_ids"]) for x in s1)
     c2 = sum(len(tokenizer(x, truncation=True, max_length=256)["input_ids"]) for x in s2)
@@ -642,7 +756,7 @@ def config_signature(cfg):
         "passage_prefix": cfg.get("passage_prefix"),
     }
     # Only recorded when set, so cache keys of earlier configs stay valid.
-    for extra in ("pooling", "max_seq_length", "model_kwargs"):
+    for extra in ("pooling", "max_seq_length", "model_kwargs", "query_model", "passage_model"):
         if extra in cfg:
             sig[extra] = cfg[extra]
     return sig
@@ -670,8 +784,11 @@ def eval_retrieval_dataset(encoder, benchmark, cfg, batch_size=64):
     query_texts = apply_prefix([row["text"] for row in queries], cfg.get("query_prefix"))
     document_texts = apply_prefix([row["text"] for row in documents], cfg.get("passage_prefix"))
 
+    # Asymmetric encoders (separate query/passage models) expose encode_queries.
+    encode_queries = getattr(encoder, "encode_queries", encoder.encode)
+
     t0 = time.perf_counter()
-    query_embeddings = encoder.encode(query_texts, batch_size=batch_size)
+    query_embeddings = encode_queries(query_texts, batch_size=batch_size)
     doc_embeddings = encoder.encode(document_texts, batch_size=batch_size)
     elapsed = time.perf_counter() - t0
 
@@ -738,6 +855,8 @@ def build_encoder(cfg):
         )
     if cfg["kind"] == "openrouter":
         return OpenRouterEncoder(cfg["name"], tokenizer_name=cfg["tokenizer_name"])
+    if cfg["kind"] == "upstage":
+        return UpstageEncoder(cfg["query_model"], cfg["passage_model"], tokenizer_name=cfg["tokenizer_name"])
 
     return ONNXEncoder(
         cfg["name"],

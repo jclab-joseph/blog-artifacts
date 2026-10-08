@@ -60,6 +60,8 @@
 | mradermacher/F2LLM-v2-1.7B-GGUF (Q4_K_M) | Korean(KLUE-STS val) | 519 | 0.7641 | 5.48 | 24577 | 4482.41 | 0.01056 |
 | mradermacher/Qwen3-Embedding-8B-i1-GGUF (i1-Q4_K_M) | English(STS-B val) | 1500 | 0.8993 | 42.92 | 43267 | 1008.07 | 0.02861 |
 | mradermacher/Qwen3-Embedding-8B-i1-GGUF (i1-Q4_K_M) | Korean(KLUE-STS val) | 519 | 0.8653 | 14.06 | 24577 | 1748.24 | 0.02709 |
+| upstage/solar-embedding-2 (query+passage) | English(STS-B val) | 1500 | 0.8579 | 31.69 | 43267 | 1365.51 | 0.02112 |
+| upstage/solar-embedding-2 (query+passage) | Korean(KLUE-STS val) | 519 | 0.8100 | 11.53 | 24577 | 2132.27 | 0.02221 |
 
 ## Retrieval
 
@@ -121,6 +123,8 @@
 | mradermacher/F2LLM-v2-1.7B-GGUF (Q4_K_M) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.4455 | 0.6635 | 0.7299 | 0.5610 | 1452.93 | -1 | 0.00 | 6.88594 |
 | mradermacher/Qwen3-Embedding-8B-i1-GGUF (i1-Q4_K_M) | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.9767 | 1.0000 | 1.0000 | 0.9884 | 322.83 | -1 | 0.00 | 7.50762 |
 | mradermacher/Qwen3-Embedding-8B-i1-GGUF (i1-Q4_K_M) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.6445 | 0.8389 | 0.8863 | 0.7428 | 4125.11 | -1 | 0.00 | 19.55028 |
+| upstage/solar-embedding-2 (query+passage) | English(MSMARCO Passage Ranking top250 test) | 43 | 6609 | 0.9070 | 0.9767 | 1.0000 | 0.9438 | 121.18 | -1 | 0.00 | 2.81807 |
+| upstage/solar-embedding-2 (query+passage) | Korean(MIRACL-ko top250 train) | 211 | 43421 | 0.5972 | 0.7867 | 0.8673 | 0.7064 | 1549.09 | -1 | 0.00 | 7.34166 |
 
 ## 참고
 
@@ -129,3 +133,4 @@
 - mradermacher/Qwen3-Embedding-8B-i1-GGUF, dragonkue/BGE-m3-ko, Neuwhufbox/BGE-m3-ko-gguf, codefuse-ai/F2LLM-v2-1.7B, mradermacher/F2LLM-v2-1.7B-GGUF 는 RTX 3080 에서 돌렸습니다.
 - 신규 모델의 입력은 256 토큰으로 잘랐고, Qwen3-Embedding 은 query 에 `Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery:`, F2LLM 은 `Instruct: Given a question, retrieve passages that can help answer the question.\nQuery: ` 를 붙였습니다 (retrieval 만 해당). pooling 은 Qwen3/F2LLM=last token, BGE-m3-ko=CLS.
 - OpenRouter(Qwen3-Embedding-8B/4B) 는 소요 시간 문제로 제외했습니다.
+- upstage/solar-embedding-2 는 Upstage API 로 돌렸습니다. retrieval 은 query 에 `solar-embedding-2-query`, 문서에 `solar-embedding-2-passage` 를 썼고, STS 는 양쪽 문장 모두 `solar-embedding-2-passage` 를 썼습니다. query 지시문은 서버 측에서 붙으므로 prefix 는 붙이지 않았습니다. 입력은 Qwen3 토크나이저(API 토큰 수와 일치)로 256 토큰으로 잘랐고, 소요 시간은 API rate limit(100 RPM / 300K TPM)에 맞춘 페이싱이 포함된 값입니다.
